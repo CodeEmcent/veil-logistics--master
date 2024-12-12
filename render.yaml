@@ -1,0 +1,26 @@
+databases:
+  - name: logistics_db
+    plan: free
+    databaseName: weatherdb
+    user: logistics_app
+
+services:
+  - type: web
+    plan: free
+    name: logistics_server
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "python -m gunicorn config.asgi:application -k uvicorn.workers.UvicornWorker"
+    envVars:
+      - key: db_url
+        fromDatabase:
+          name: logistics_db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 4
+      - key : URL
+        value : False
+      - key : LOGISTICS_KEY
+        value : False
